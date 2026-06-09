@@ -1,251 +1,172 @@
-Portfolio Flow
+<p align="center">
+  <h1 align="center">⚡ PORTFOLIO FLOW</h1>
+  <p align="center"><strong>Upload your resume. Answer 5 questions. Get a live portfolio.</strong></p>
+</p>
 
+> An AI-powered web app that turns any resume into a stunning, shareable portfolio website — in under 3 minutes.
+> Built in public. Documented as it grows.
 
-Create your professional portfolio in minutes. Upload resume → Answer questions → Go live.
+---
 
-A modern web application that generates stunning, personalized portfolio websites from resumes using AI-powered extraction and intelligent parsing.
+## What This Is
 
-Live Demo: https://prateekai-q4rsglfb.manus.space/
+Portfolio Flow eliminates the single biggest friction in personal branding: the time it takes to go from resume to live portfolio.
 
+Upload a PDF resume. Answer a short questionnaire. A fully-formed, hosted portfolio page is generated and live immediately — no code, no DevOps, no design skills needed.
 
+**Hybrid AI parsing. Instant HTML generation. Zero setup for the end user.**
 
+---
 
-🎯 Problem & Solution
+## How It Works
 
-The Problem
+```
+    ┌──────────────────────────────────────────────────┐
+    │                   USER JOURNEY                    │
+    └──────────────────────────────────────────────────┘
 
-•
-Job seekers spend hours building portfolios
+   [Upload Resume]  →  [Questionnaire]  →  [Preview]  →  [Live Portfolio]
+        │                    │                │                │
+        ▼                    ▼                ▼                ▼
+   PDF → Text          5–7 questions     Review &         Hosted at
+   extraction          about goals,      customise        subdomain
+   + parsing           tone, style       before go-live   instantly
+```
 
-•
-Developers spend weeks building portfolio builders
+**Core Pipeline:**
 
-•
-Both are stuck in friction
+```
+                    ┌──────────────────────────┐
+                    │        pdfHandler         │
+                    │   PDF → raw text          │
+                    └────────────┬─────────────┘
+                                 │
+                    ┌────────────▼─────────────┐
+                    │   hybridResumeParser      │
+                    │  Regex (primary, fast)    │
+                    │  LLM (enhancement layer)  │
+                    └────────────┬─────────────┘
+                                 │
+               ┌─────────────────┼──────────────────┐
+               ▼                 ▼                   ▼
+        Name / Email /      Experience /       Skills /
+        Contact info        Education          Summary
+               │                 │                   │
+               └─────────────────▼───────────────────┘
+                    ┌────────────────────────┐
+                    │  portfolioHTMLGenerator │
+                    │  Builds responsive HTML │
+                    └────────────┬───────────┘
+                                 │
+                    ┌────────────▼───────────┐
+                    │     Live Portfolio      │
+                    │   Shareable instantly   │
+                    └────────────────────────┘
+```
 
-The Solution
+**Key design decision:** The parser never fails. Regex handles extraction always; LLM enhancement is non-blocking and optional. If the LLM is unavailable, the user still gets their portfolio.
 
-Portfolio Flow eliminates the friction:
+---
 
-1.
-Upload your resume (PDF or text)
+## Tech Stack
 
-2.
-Answer 5-7 simple questions
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19 + TypeScript + Tailwind CSS 4 |
+| API Layer | tRPC 11 — end-to-end type safety, no REST boilerplate |
+| Backend | Express 4 + Node.js |
+| Database | MySQL / TiDB with Drizzle ORM |
+| AI / LLM | Integrated LLM for resume enhancement and content enrichment |
+| Auth | OAuth |
+| Hosting | Manus Infrastructure — automatic SSL, CDN, free subdomains |
 
-3.
-Get a live portfolio instantly
+---
 
-No coding. No hosting fees. No complexity.
+## Project Structure
 
-
-
-
-✨ Key Features
-
-•
-AI-Powered Resume Parsing - Intelligent hybrid regex + LLM extraction
-
-•
-Instant Portfolio Generation - Live at a Manus subdomain immediately
-
-•
-Zero Setup Required - No servers, no databases, no DevOps
-
-•
-Beautiful Templates - Professional designs ready to use
-
-•
-One-Click Sharing - Share your portfolio with employers instantly
-
-•
-Mobile Responsive - Works perfectly on all devices
-
-
-
-
-🏗️ Architecture
-
-Tech Stack
-
-•
-Frontend: React 19 + Tailwind CSS 4 + TypeScript
-
-•
-Backend: Express 4 + tRPC 11 + Node.js
-
-•
-Database: MySQL/TiDB with Drizzle ORM
-
-•
-Authentication: Manus OAuth
-
-•
-AI/LLM: Integrated LLM for resume enhancement
-
-•
-Hosting: Manus Infrastructure
-
-Core Components
-
-Plain Text
-
-
+```
 portfolio-flow/
-├── client/                    # React frontend
-│   ├── src/
-│   │   ├── pages/            # Page components
-│   │   │   ├── Home.tsx
-│   │   │   ├── CreatePortfolio.tsx
-│   │   │   └── MyPortfolios.tsx
-│   │   ├── components/       # Reusable UI components
-│   │   ├── lib/
-│   │   │   └── trpc.ts       # tRPC client
-│   │   └── App.tsx           # Routes & layout
-│   └── index.html
 │
-├── server/                    # Node.js backend
-│   ├── routers.ts            # tRPC procedures
-│   ├── db.ts                 # Database queries
-│   ├── hybridResumeParser.ts # Resume extraction (regex-based)
-│   ├── resumeParser.ts       # Resume parsing with LLM enhancement
-│   ├── pdfHandler.ts         # PDF to text conversion
-│   ├── portfolioHTMLGenerator.ts # Portfolio HTML generation
-│   └── _core/                # Framework internals
+├── src/
+│   ├── components/
+│   │   ├── App.tsx                    # Routes & layout
+│   │   ├── Home.tsx                   # Landing page
+│   │   ├── CreatePortfolio.tsx        # Resume upload + creation flow
+│   │   ├── Dashboard.tsx              # User portfolio dashboard
+│   │   ├── Questionnaire.tsx          # Personalisation step
+│   │   ├── TemplateSelection.tsx      # Choose portfolio style
+│   │   ├── PortfolioPreview.tsx       # Review before publishing
+│   │   ├── PortfolioDisplay.tsx       # Portfolio viewer
+│   │   ├── PublicPortfolio.tsx        # Public shareable page
+│   │   └── Success.tsx                # Post-publish confirmation
+│   │
+│   └── server/
+│       ├── routers.ts                 # tRPC procedures — all API endpoints
+│       ├── db.ts                      # Database queries
+│       ├── schema.ts                  # Drizzle ORM table definitions
+│       ├── hybridResumeParser.ts      # Regex + LLM hybrid extraction
+│       ├── resumeParser.ts            # Parser with LLM enhancement layer
+│       ├── pdfHandler.ts              # PDF to text conversion
+│       ├── portfolioHTMLGenerator.ts  # Portfolio HTML builder
+│       ├── portfolioService.ts        # Portfolio CRUD + business logic
+│       ├── portfolioDisplayRouter.ts  # Public portfolio routing
+│       ├── robustLLM.ts               # LLM wrapper with graceful fallback
+│       └── githubService.ts           # GitHub profile integration
 │
-├── drizzle/                   # Database schema & migrations
-│   └── schema.ts             # Table definitions
+├── tests/
+│   ├── hybridResumeParser.test.ts     # Core parser test suite
+│   ├── resumeParser.test.ts           # Parser with enhancement tests
+│   ├── pdfHandler.test.ts             # PDF conversion tests
+│   ├── portfolioService.test.ts       # Portfolio service tests
+│   ├── githubService.test.ts          # GitHub integration tests
+│   ├── test-complete-flow.mjs         # End-to-end flow test
+│   ├── test-complete-flow-screenshots.mjs
+│   ├── test-resume-parsing.mjs
+│   ├── test-riya-end-to-end.mjs
+│   └── test-rubi-complete-flow.mjs
 │
-├── storage/                   # S3 file storage helpers
-│   └── index.ts
+├── docs/
+│   ├── architecture/                  # Technical specs & architecture guides
+│   ├── guides/                        # User-facing how-to docs
+│   ├── product/                       # Features, roadmap, project poster
+│   └── social/                        # LinkedIn posts & build-in-public content
 │
-└── shared/                    # Shared types & constants
-    └── types.ts
+├── assets/
+│   └── screenshots/                   # UI screenshots across key flows
+│
+└── todo.md
+```
 
+---
 
+## Resume Parser — What It Extracts
 
+| Field | Method |
+|-------|--------|
+| Name | Regex (all-caps + mixed-case support) |
+| Email & Phone | Regex pattern matching |
+| Professional Summary | Regex + LLM enhancement |
+| Work Experience | Structured extraction — company, role, dates, description |
+| Skills | Category-aware parsing |
+| Education | School, degree, field, graduation year |
 
+Supported resume formats: chronological, functional, combination, minimal.
 
+---
 
-🚀 How It Works
+## Key Screens
 
-Resume Parsing Pipeline
+1. **Landing Page** — Value proposition and single clear CTA
+2. **Resume Upload** — Drag-and-drop PDF interface
+3. **Questionnaire** — 5–7 questions about goals, tone, links
+4. **Portfolio Preview** — Review and edit before going live
+5. **Live Portfolio** — Shareable, hosted, mobile-responsive page
 
-1.
-PDF Extraction - Convert PDF to text using pdftotext
+---
 
-2.
-Hybrid Parsing - Fast regex-based extraction (primary method)
+## Quick Start
 
-•
-Name, email, phone extraction
-
-•
-Skills identification
-
-•
-Experience & education parsing
-
-•
-Summary generation
-
-
-
-3.
-LLM Enhancement (optional, non-blocking)
-
-•
-Improve descriptions
-
-•
-Generate professional summaries
-
-•
-Enhance content quality
-
-
-
-4.
-Portfolio Generation - Create beautiful HTML portfolio
-
-Key Innovation: Non-Blocking LLM
-
-The parser uses a hybrid approach:
-
-•
-Primary: Fast regex-based extraction (always works)
-
-•
-Enhancement: Optional LLM improvement (fails gracefully)
-
-•
-Result: Resume parsing never fails, even if LLM is unavailable
-
-This ensures 100% success rate for resume parsing.
-
-
-
-
-📊 Resume Parser Features
-
-Supported Formats
-
-•
-✅ Chronological resumes
-
-•
-✅ Functional resumes
-
-•
-✅ Combination resumes
-
-•
-✅ Minimal resumes
-
-•
-✅ All-caps names (e.g., "RIYA GUPTA")
-
-•
-✅ Mixed-case names (e.g., "John Doe")
-
-Extracted Data
-
-•
-Name, email, phone
-
-•
-Professional summary
-
-•
-Work experience (company, role, duration, description)
-
-•
-Skills (categorized)
-
-•
-Education (school, degree, field, graduation year)
-
-
-
-
-🔧 Development
-
-Prerequisites
-
-•
-Node.js 22+
-
-•
-pnpm
-
-•
-MySQL/TiDB database
-
-Setup
-
-Bash
-
-
+```bash
 # Clone the repository
 git clone https://github.com/Pratkashyap/portfolio-flow.git
 cd portfolio-flow
@@ -261,333 +182,57 @@ pnpm db:push
 
 # Start development server
 pnpm dev
+```
 
-
-
-Running Tests
-
-Bash
-
-
-# Run all tests
+```bash
+# Run tests
 pnpm test
 
-# Run specific test file
-pnpm test -- server/hybridResumeParser.test.ts
+# Run a specific test file
+pnpm test -- tests/hybridResumeParser.test.ts
 
 # Watch mode
 pnpm test:watch
+```
 
+---
 
+## Performance
 
-Building for Production
+| Metric | Target |
+|--------|--------|
+| Resume parsing | < 2 seconds |
+| Portfolio generation | < 1 second |
+| Page load | < 1.5 seconds |
+| Lighthouse score | 90+ |
 
-Bash
+---
 
+## Roadmap
 
-# Build frontend
-pnpm build
+- [ ] Custom domain support
+- [ ] Multiple portfolio templates
+- [ ] Portfolio analytics (views, clicks)
+- [ ] Social media preview cards
+- [ ] PDF portfolio export
+- [ ] GitHub project auto-import
+- [ ] Advanced section customisation
 
-# Start production server
-pnpm start
+---
 
+## Live Demo
 
+[https://portfoliow-itqbyqt8.manus.space](https://portfoliow-itqbyqt8.manus.space)
 
+---
 
+## Author
 
+**Prateek Kashyap**
+GitHub: [@Pratkashyap](https://github.com/Pratkashyap)
 
-📝 Testing
+---
 
-The project includes comprehensive test coverage:
+## License
 
-•
-Resume Parser Tests - Hybrid extraction, all-caps names, edge cases
-
-•
-PDF Handler Tests - PDF conversion, error handling
-
-•
-GitHub Service Tests - Profile fetching
-
-•
-Portfolio Service Tests - Portfolio creation & management
-
-•
-Auth Tests - OAuth logout flow
-
-All 27 tests passing ✅
-
-
-
-
-🎨 UI/UX
-
-Design Principles
-
-•
-Clean, professional interface
-
-•
-Minimal friction (3-4 steps to portfolio )
-
-•
-Real-time feedback
-
-•
-Mobile-first responsive design
-
-•
-Accessible color contrast
-
-Key Screens
-
-1.
-Landing Page - Value proposition & CTA
-
-2.
-Resume Upload - Drag-and-drop interface
-
-3.
-Questions Form - Customization step
-
-4.
-Portfolio Preview - Review before publishing
-
-5.
-Portfolio Page - Live, shareable portfolio
-
-
-
-
-🚀 Deployment
-
-Portfolio Flow is deployed on Manus Infrastructure:
-
-•
-Automatic SSL certificates
-
-•
-Global CDN
-
-•
-Automatic scaling
-
-•
-Zero downtime deployments
-
-•
-Free subdomains (*.manus.space)
-
-Live at: https://portfoliow-itqbyqt8.manus.space/
-
-
-
-
-📈 Performance
-
-•
-Resume Parsing: < 2 seconds
-
-•
-Portfolio Generation: < 1 second
-
-•
-Page Load: < 1.5 seconds (Lighthouse score: 90+ )
-
-•
-Uptime: 99.9%
-
-
-
-
-🔐 Security
-
-•
-OAuth authentication (Manus)
-
-•
-HTTPS/TLS encryption
-
-•
-Input validation & sanitization
-
-•
-SQL injection prevention (Drizzle ORM)
-
-•
-XSS protection
-
-•
-CSRF tokens
-
-
-
-
-🎯 Future Roadmap
-
-
-
-
-Custom domain support
-
-
-
-
-Multiple portfolio templates
-
-
-
-
-Portfolio analytics
-
-
-
-
-Social media integration
-
-
-
-
-PDF export
-
-
-
-
-Team collaboration
-
-
-
-
-Advanced customization
-
-
-
-
-📚 Key Files
-
-File
-Purpose
-server/hybridResumeParser.ts
-Core resume extraction logic
-server/resumeParser.ts
-Hybrid parser + LLM enhancement
-server/pdfHandler.ts
-PDF to text conversion
-server/portfolioHTMLGenerator.ts
-Portfolio HTML generation
-drizzle/schema.ts
-Database schema
-client/src/pages/CreatePortfolio.tsx
-Portfolio creation flow
-
-
-
-
-
-
-
-💡 Why This Matters
-
-For Job Seekers
-
-•
-Professional portfolio in minutes
-
-•
-Free hosting forever
-
-•
-Easy to update and share
-
-•
-No technical skills required
-
-For Developers
-
-•
-Build products, not infrastructure
-
-•
-Manus handles auth, database, hosting
-
-•
-Focus on features that matter
-
-•
-Ship faster, iterate smarter
-
-
-
-
-📖 Learning Resources
-
-•
-Manus Documentation
-
-•
-tRPC Documentation
-
-•
-React 19 Guide
-
-•
-Tailwind CSS 4
-
-•
-Drizzle ORM
-
-
-
-
-🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-
-
-
-📄 License
-
-MIT License - see LICENSE file for details
-
-
-
-
-👨‍💻 Author
-
-Prateek Kashyap
-
-•
-GitHub: @Pratkashyap
-
-•
-Portfolio: https://prateekai-q4rsglfb.manus.space/
-
-
-
-
-🙏 Acknowledgments
-
-Built with Manus - The platform that lets developers focus on building products instead of infrastructure.
-
-
-
-
-📞 Support
-
-For issues, questions, or feedback:
-
-•
-Open an issue on GitHub
-
-•
-Check existing documentation
-
-•
-Review test files for examples
-
-
-
-
-Made with ❤️ using Manus
-
+MIT — see LICENSE for details.
